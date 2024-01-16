@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #fff; /* White background */
+        }
+        canvas {
+            border: 2px solid #000;
+        }
+    </style>
+    <title>Kandinsky-inspired Pulsing Circles</title>
+</head>
+<body>
+<canvas id="kandinskyCanvas" width="600" height="600"></canvas>
+
+<script>
+    const canvas = document.getElementById('kandinskyCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const grid = {
+        rows: 6,
+        cols: 6,
+        circles: [],
+    };
+
+    function initializeCircles() {
+        const circleSize = canvas.width / grid.cols;
+
+        for (let i = 0; i < grid.rows; i++) {
+            for (let j = 0; j < grid.cols; j++) {
+                grid.circles.push({
+                    x: j * circleSize + circleSize / 2,
+                    y: i * circleSize + circleSize / 2,
+                    radius: circleSize / 3,
+                    pulsingSpeed: 0.002 + Math.random() * 0.002,
+                    color: getRandomColor(),
+                });
+            }
+        }
+    }
+
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        grid.circles.forEach(circle => {
+            const pulsingValue = Math.sin(Date.now() * circle.pulsingSpeed);
+            const scaleFactor = 1 + pulsingValue * 0.2;
+
+            ctx.beginPath();
+            ctx.arc(circle.x, circle.y, circle.radius * scaleFactor, 0, 2 * Math.PI);
+            ctx.fillStyle = circle.color;
+            ctx.fill();
+            ctx.strokeStyle = '#000'; // Black stroke for contrast
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        });
+
+        requestAnimationFrame(draw);
+    }
+
+    initializeCircles();
+    draw();
+</script>
+</body>
+</html>

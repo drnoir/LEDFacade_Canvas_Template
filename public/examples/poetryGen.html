@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #fff; /* White background */
+        }
+        canvas {
+            border: 2px solid #000;
+            font-family: 'Arial', sans-serif;
+            font-size: 18px;
+        }
+    </style>
+    <title>Random Poetry Generator</title>
+</head>
+<body>
+<canvas id="poetryCanvas" width="600" height="400"></canvas>
+
+<script>
+    const canvas = document.getElementById('poetryCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const nouns = ['moon', 'sun', 'ocean', 'wind', 'rose', 'bird', 'heart', 'dream'];
+    const adjectives = ['silent', 'whispering', 'gentle', 'fleeting', 'eternal', 'mystic', 'sorrowful', 'dancing'];
+    const verbs = ['sings', 'dances', 'weaves', 'whispers', 'flows', 'embraces', 'awakens', 'wanders'];
+
+    function generatePoem() {
+        const noun = getRandomElement(nouns);
+        const adjective = getRandomElement(adjectives);
+        const verb = getRandomElement(verbs);
+
+        return `${adjective} ${noun} ${verb}`;
+    }
+
+    function getRandomElement(array) {
+        return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function drawPoem() {
+        const poem = generatePoem();
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#000';
+        ctx.textAlign = 'center';
+        ctx.fillText(poem, canvas.width / 2, canvas.height / 2);
+    }
+
+    drawPoem();
+
+    // Optionally, generate a new poem every 10 seconds
+    setInterval(drawPoem, 10000);
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #333;
+    }
+    canvas {
+      border: 2px solid #fff;
+    }
+  </style>
+  <title>Flashing Circle</title>
+</head>
+<body>
+<canvas id="flashingCircleCanvas" width="400" height="400"></canvas>
+
+<script>
+  const canvas = document.getElementById('flashingCircleCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const circle = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    radius: 50,
+    color: '#fff',
+  };
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = circle.color;
+    ctx.beginPath();
+    ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
+    ctx.fill();
+
+    requestAnimationFrame(draw);
+  }
+
+  function update() {
+    const currentTime = Date.now();
+    const flashSpeed = 0.5;
+    const flashValue = Math.sin(currentTime * flashSpeed);
+
+    if (flashValue > 0) {
+      circle.color = '#fff';
+    } else {
+      circle.color = '#000';
+    }
+
+    setTimeout(update, 1000 / 60);
+  }
+
+  draw();
+  update();
+</script>
+</body>
+</html>

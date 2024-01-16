@@ -19,10 +19,18 @@ h1{
 }
 button {
     padding: 10px 20px;
-    font-size: 18px;
+    font-size: 15px;
     cursor: pointer;
     font-family: 'Silkscreen', sans-serif;
 }
+
+input,
+label {
+    margin: 0.5rem 0;
+    cursor: pointer;
+    font-family: 'Silkscreen', sans-serif;
+}
+
 
 /* MEDIA QUERIES FOR MOBILE SUPPORT */
 

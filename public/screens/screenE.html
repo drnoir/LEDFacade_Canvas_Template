@@ -1,13 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <title>SCREEN E</title>
-    <meta charset="UTF-8">
+    <title>HTML and MP4 File Runner</title>
     <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
-<script src='../js/main.js' type = "module"></script>
-<h1>SCREEN E</h1>
-    <canvas width="418" height="652" id="game"></canvas>
+<h1>Screen E : Upload and Run HTML/MP4 Files</h1>
+<label for="fileInput">Select an HTML or MP4 file:</label>
+<input type="file" id="fileInput">
+<button onclick="loadAndRunFile()">Load & Run</button>
+<hr>
+<div id="contentContainer">
+    <iframe id="htmlFrame" sandbox="allow-scripts" width="418" height="652"></iframe>
+    <video id="videoPlayer" width="418" height="652" style="display:none;" controls autoplay></video>
+</div>
+
+<script>
+    function loadAndRunFile() {
+        const fileInput = document.getElementById("fileInput");
+        const contentContainer = document.getElementById("contentContainer");
+        const htmlFrame = document.getElementById("htmlFrame");
+        const videoPlayer = document.getElementById("videoPlayer");
+
+        if (fileInput.files.length === 0) {
+            alert("Please select an HTML or MP4 file.");
+            return;
+        }
+
+        const file = fileInput.files[0];
+
+        if (file.type.startsWith("text/html")) {
+            // Load and display an HTML file
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const htmlContent = event.target.result;
+                const htmlDoc = new DOMParser().parseFromString(htmlContent, "text/html");
+
+                // Ensure the content is an HTML document
+                if (!htmlDoc.documentElement || htmlDoc.documentElement.nodeName !== "HTML") {
+                    alert("The selected file is not a valid HTML document.");
+                    return;
+                }
+
+                // Hide video player and show HTML frame
+                videoPlayer.style.display = "none";
+                htmlFrame.style.display = "block";
+
+                // Set the iframe's content to the loaded HTML
+                htmlFrame.srcdoc = htmlContent;
+            };
+
+            reader.readAsText(file);
+        } else if (file.type.startsWith("video/mp4")) {
+            // Load and display an MP4 video
+            // Hide HTML frame and show video player
+            htmlFrame.style.display = "none";
+            videoPlayer.style.display = "block";
+
+            // Set the source of the video player
+            videoPlayer.src = URL.createObjectURL(file);
+        } else {
+            alert("Unsupported file type. Please select an HTML or MP4 file.");
+        }
+    }
+</script>
 </body>
 </html>

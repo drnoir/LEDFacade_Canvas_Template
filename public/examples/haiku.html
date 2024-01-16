@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f5deb3; /* Papyrus color */
+    }
+    canvas {
+      border: 2px solid #000;
+      font-family: 'Arial', sans-serif;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    #haikuText {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-family: 'Arial', sans-serif;
+      font-size: 24px;
+      line-height: 1.5;
+      display: none;
+    }
+  </style>
+  <title>Random Haiku Generator</title>
+</head>
+<body>
+<canvas id="haikuCanvas" width="600" height="400"></canvas>
+<div id="haikuText"></div>
+
+<script>
+  const canvas = document.getElementById('haikuCanvas');
+  const ctx = canvas.getContext('2d');
+  const haikuTextDiv = document.getElementById('haikuText');
+
+  const haikuLines = [
+    ['An ancient pond', 'Frog leaps in, water ripples', 'Silent reflection'],
+    ['Cherry blossoms fall', 'Whispers of the springtime breeze', 'Nature\'s fleeting grace'],
+    ['Moonlight on the waves', 'Ocean\'s song in gentle tides', 'Night\'s quiet embrace'],
+    // Add more haiku lines as needed
+  ];
+
+  function generateHaiku() {
+    return haikuLines[Math.floor(Math.random() * haikuLines.length)];
+  }
+
+  function drawHaiku() {
+    const haiku = generateHaiku();
+
+    // Draw papyrus background
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#8b4513'; // Brown color for papyrus
+    ctx.fillRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+    // Draw haiku lines on canvas
+    ctx.fillStyle = '#000';
+    ctx.textAlign = 'center';
+    ctx.font = 'italic bold 20px Arial';
+
+    for (let i = 0; i < haiku.length; i++) {
+      ctx.fillText(haiku[i], canvas.width / 2, 50 + i * 120);
+    }
+
+    // Display haiku text outside the canvas
+    haikuTextDiv.textContent = haiku.join('\n');
+    haikuTextDiv.style.display = 'block';
+  }
+
+  drawHaiku();
+
+  // Optionally, generate a new haiku every 15 seconds
+  setInterval(() => {
+    haikuTextDiv.style.display = 'none';
+    drawHaiku();
+  }, 15000);
+</script>
+</body>
+</html>

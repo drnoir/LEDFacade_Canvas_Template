@@ -13,13 +13,14 @@ via the MMU Soda displays.
 Make sure you have installed node first 
 
 ## Updating canvas content
-edit the main.js file. If you want to add different displays for different screens 
+upload form and upload html files.
+If you want to customise different displays for different screens 
 you could add screenA.js , screenB.js etc and link to those seperate scripts on the 
-associated html pages. Title is a page with animation done with css.
+associated html pages. 
 
 ## Spec
 - index.html - Main Menu
-- Screens - Screens with setup
+- Screens - Screens with setup and form elements for loading in html content
 
 ## Screens (Client Side)
 - Screen A - (CSS / HTML / JS)
