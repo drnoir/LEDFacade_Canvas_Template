@@ -38,3 +38,11 @@ ul li{
     list-style: none;
     font-size: 2em;
 }
+
+button{
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: 'Silkscreen', sans-serif;
+    margin:1em;
+}
