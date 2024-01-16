@@ -1,0 +1,40 @@
+/* CSS FOR MAIN MENU */
+
+@font-face {
+    font-family: serifa;
+    src: url(SerifaBQ-Regular.otf);
+  }
+
+body{
+    background-color: whitesmoke;
+    font-family: Serifa,Georgia,serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+h1{
+    font-family: serifa;
+    font-size: 2em;
+    color:black;
+}
+
+h3{
+    font-family: serifa;
+    font-size: 2em;
+    color:black;  
+}
+
+.logo{
+    width:auto;
+    height:200px;
+    margin: 1em;
+}
+
+ul li{
+    text-decoration: none;
+    color:cornflowerblue;
+    list-style: none;
+    font-size: 2em;
+}
