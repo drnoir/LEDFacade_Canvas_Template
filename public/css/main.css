@@ -24,9 +24,8 @@ button {
     font-family: 'Silkscreen', sans-serif;
 }
 
-input,
-label {
-    margin: 0.5rem 0;
+input[type=file]{
+    font-size: 20px;
     cursor: pointer;
     font-family: 'Silkscreen', sans-serif;
 }

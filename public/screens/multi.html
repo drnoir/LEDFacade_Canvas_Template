@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>HTML and MP4 File Runner</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<h1>Upload and Run HTML/MP4 Files (SLIDESHOW)</h1>
+<label for="fileInput">Select Multiple HTML or MP4 files:</label>
+<input type="file" id="fileInput" multiple>
+<button onclick="loadAndRunFiles()">Load & Run</button>
+<hr>
+<div id="contentContainer">
+  <iframe id="htmlFrame" sandbox="allow-scripts" width="418" height="652"></iframe>
+  <video id="videoPlayer" width="418" height="652" style="display:none;" controls autoplay></video>
+</div>
+
+<script>
+  let currentFileIndex = 0;
+  let currentFileDuration = 0;
+  let maxDuration = 10 * 1000; // 1 minute in milliseconds
+
+  const fileInput = document.getElementById("fileInput");
+  const contentContainer = document.getElementById("contentContainer");
+  const htmlFrame = document.getElementById("htmlFrame");
+  const videoPlayer = document.getElementById("videoPlayer");
+
+  function loadAndRunFiles() {
+    const files = fileInput.files;
+
+    if (files.length === 0) {
+      alert("Please select HTML or MP4 files.");
+      return;
+    }
+
+    if (currentFileIndex >= files.length) {
+      currentFileIndex = 0; // Reset to the first file in the queue
+    }
+
+    const file = files[currentFileIndex];
+
+    if (file.type.startsWith("text/html")) {
+      // Load and display an HTML file
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+        const htmlContent = event.target.result;
+        const htmlDoc = new DOMParser().parseFromString(htmlContent, "text/html");
+
+        // Ensure the content is an HTML document
+        if (!htmlDoc.documentElement || htmlDoc.documentElement.nodeName !== "HTML") {
+          alert("The selected file is not a valid HTML document.");
+          return;
+        }
+
+        // Hide video player and show HTML frame
+        videoPlayer.style.display = "none";
+        htmlFrame.style.display = "block";
+
+        // Set the iframe's content to the loaded HTML
+        htmlFrame.srcdoc = htmlContent;
+
+        // Schedule the next file after a delay
+        setTimeout(loadNextFile, maxDuration);
+      };
+
+      reader.readAsText(file);
+    } else if (file.type.startsWith("video/mp4")) {
+      // Load and display an MP4 video
+      // Hide HTML frame and show video player
+      htmlFrame.style.display = "none";
+      videoPlayer.style.display = "block";
+
+      // Set the source of the video player
+      videoPlayer.src = URL.createObjectURL(file);
+
+      // Calculate the video's duration and schedule the next file after it finishes
+      videoPlayer.onloadedmetadata = function() {
+        currentFileDuration = videoPlayer.duration * 1000; // Convert to milliseconds
+        setTimeout(loadNextFile, currentFileDuration);
+      };
+    } else {
+      alert("Unsupported file type. Please select an HTML or MP4 file.");
+    }
+  }
+
+  function loadNextFile() {
+    currentFileIndex++;
+    currentFileDuration = 0;
+    loadAndRunFiles(); // Load and run the next file in the queue
+  }
+</script>
+</body>
+</html>
