@@ -16,13 +16,13 @@ h1{
 }
 
 .navbar-load {
-    background-image: linear-gradient(to right, #e80089, #00e5f1, #3c5693);
+    background-image: linear-gradient(to right, #d7d7d7, #cbcbcb, #000000);
     height:2em;
     animation: load 4s linear infinite;
 }
 
 .navbar-load2 {
-    background-image: linear-gradient(to left, #e80089, #00e5f1, #3c5693);
+    background-image: linear-gradient(to left, #d7d7d7, #cbcbcb, #000000);
     height:2em;
     animation: load2 4s linear infinite;
 }
