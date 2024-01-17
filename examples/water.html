@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #87CEEB; /* Sky Blue */
+        }
+        canvas {
+            border: 2px solid #000;
+        }
+    </style>
+    <title>Taller Water Flowing Effect with Shades of Blue</title>
+</head>
+<body>
+<canvas id="waterCanvas" width="800" height="600"></canvas>
+
+<script>
+    const canvas = document.getElementById('waterCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let time = 0;
+
+    function drawWater() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw sky background
+        ctx.fillStyle = '#87CEEB'; /* Sky Blue */
+        ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
+
+        // Draw water waves with shades of blue
+        const waveAmplitude = 30;
+        const waveFrequency = 0.02;
+        const waterLevel = canvas.height / 1.5; // Adjusted to make the water taller
+
+        ctx.beginPath();
+        ctx.moveTo(0, waterLevel);
+
+        for (let x = 0; x <= canvas.width; x += 10) {
+            const y = waterLevel + waveAmplitude * Math.sin(waveFrequency * x + time);
+            const shadeOfBlue = Math.floor(200 + 55 * Math.sin(x / canvas.width * 2 * Math.PI));
+            ctx.lineTo(x, y);
+            ctx.fillStyle = `rgba(0, 0, ${shadeOfBlue}, 0.5)`;
+            ctx.fill();
+        }
+
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.lineTo(0, canvas.height);
+        ctx.closePath();
+
+        requestAnimationFrame(drawWater);
+        time += 0.1;
+    }
+
+    drawWater();
+</script>
+</body>
+</html>
