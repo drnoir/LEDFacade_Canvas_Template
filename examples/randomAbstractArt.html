@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      transition: opacity 2s ease-in-out;
+    }
+  </style>
+  <title>Random Abstract Artwork</title>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const refreshInterval = 8000; // 20 seconds
+  const fadeInDuration = 2000; // 2 seconds
+  const fadeOutDuration = 2000; // 2 seconds
+
+  function randomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
+  function drawRandomArtwork() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw random shapes or patterns
+    for (let i = 0; i < 50; i++) {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height;
+      const size = Math.random() * 50 + 10;
+
+      ctx.fillStyle = randomColor();
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+  }
+
+  function fadeIn() {
+    canvas.style.opacity = '1';
+  }
+
+  function fadeOut() {
+    canvas.style.opacity = '0';
+  }
+
+  function refreshArtwork() {
+    fadeOut();
+    setTimeout(() => {
+      drawRandomArtwork();
+      fadeIn();
+    }, fadeOutDuration);
+
+    setTimeout(refreshArtwork, refreshInterval);
+  }
+
+  // Set canvas size
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  // Initial drawing and start the refresh cycle
+  drawRandomArtwork();
+  fadeIn(); // Initial fade-in
+  setTimeout(refreshArtwork, refreshInterval);
+</script>
+</body>
+</html>

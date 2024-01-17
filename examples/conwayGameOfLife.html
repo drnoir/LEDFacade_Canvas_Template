@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            background-color: #eee;
+        }
+    </style>
+    <title>Conway's Game of Life</title>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const cellSize = 10;
+    const numRows = Math.floor(canvas.height / cellSize);
+    const numCols = Math.floor(canvas.width / cellSize);
+    let grid = createEmptyGrid();
+
+    function createEmptyGrid() {
+        return Array.from({ length: numRows }, () => Array(numCols).fill(false));
+    }
+
+    function drawGrid() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let row = 0; row < numRows; row++) {
+            for (let col = 0; col < numCols; col++) {
+                ctx.fillStyle = grid[row][col] ? '#333' : '#eee';
+                ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                ctx.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize);
+            }
+        }
+    }
+
+    function updateGrid() {
+        const newGrid = createEmptyGrid();
+
+        for (let row = 0; row < numRows; row++) {
+            for (let col = 0; col < numCols; col++) {
+                const neighbors = countNeighbors(row, col);
+
+                if (grid[row][col]) {
+                    newGrid[row][col] = neighbors === 2 || neighbors === 3;
+                } else {
+                    newGrid[row][col] = neighbors === 3;
+                }
+            }
+        }
+
+        grid = newGrid;
+    }
+
+    function countNeighbors(row, col) {
+        let count = 0;
+
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                const newRow = row + i;
+                const newCol = col + j;
+
+                if (newRow >= 0 && newRow < numRows && newCol >= 0 && newCol < numCols) {
+                    count += grid[newRow][newCol] ? 1 : 0;
+                }
+            }
+        }
+
+        // Subtract the center cell since it was counted as a neighbor
+        count -= grid[row][col] ? 1 : 0;
+
+        return count;
+    }
+
+    function randomizeGrid() {
+        for (let row = 0; row < numRows; row++) {
+            for (let col = 0; col < numCols; col++) {
+                grid[row][col] = Math.random() > 0.5;
+            }
+        }
+    }
+
+    function animate() {
+        drawGrid();
+        updateGrid();
+        requestAnimationFrame(animate);
+    }
+
+    // Initial random grid
+    randomizeGrid();
+    animate();
+</script>
+</body>
+</html>
