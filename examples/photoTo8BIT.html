@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo to 8-bit Art</title>
+  <style>
+    body {
+      text-align: center;
+      padding: 20px;
+    }
+
+    canvas {
+      border: 2px solid black;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+<h1>Photo to 8-bit Art</h1>
+<input type="file" accept="image/*" id="fileInput" onchange="handleFileSelect()">
+<canvas id="outputCanvas" width="400" height="300"></canvas>
+
+<script>
+  function handleFileSelect() {
+    const input = document.getElementById('fileInput');
+    const canvas = document.getElementById('outputCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const img = new Image();
+
+        img.onload = function () {
+          // Draw the original image on the canvas
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          // Convert the image to 8-bit style
+          convertTo8BitArt(ctx, canvas.width, canvas.height);
+
+        };
+
+        img.src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function convertTo8BitArt(ctx, width, height) {
+    const imageData = ctx.getImageData(0, 0, width, height);
+    const data = imageData.data;
+
+    for (let i = 0; i < data.length; i += 4) {
+      // Calculate the average color value
+      const avgColor = (data[i] + data[i + 1] + data[i + 2]) / 3;
+
+      // Apply 8-bit style by reducing the color depth
+      const newColor = Math.floor(avgColor / 32) * 32;
+
+      // Update each color component separately
+      data[i] = newColor;         // Red
+      data[i + 1] = newColor;     // Green
+      data[i + 2] = newColor;     // Blue
+      // You can keep the original alpha value if needed: data[i + 3] = data[i + 3];
+    }
+
+    // Update the canvas with the 8-bit style image
+    ctx.putImageData(imageData, 0, 0);
+  }
+</script>
+</body>
+</html>
