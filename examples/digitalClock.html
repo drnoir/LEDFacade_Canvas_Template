@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro Digital Clock</title>
+
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #000;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .date, .clock {
+      color: red;
+      text-shadow: 3px 3px 0px #000;
+      text-shadow: 0 0 6px rgba(255, 0, 0, 0.7), 0 0 30px rgba(255, 0, 0, 0.5);
+      line-height: 0.6;
+      font-family: 'Press Start 2P', cursive;
+      animation: pulse 1s infinite alternate;
+    }
+
+    .date {
+      font-size: 90px;
+      margin-bottom: 40px;
+    }
+
+    .clock {
+      font-size: 120px;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1.05);
+        opacity: 0.8;
+      }
+    }
+  </style>
+</head>
+<body>
+<div id="dateDisplay" class="date"></div>
+<div id="clock" class="clock"></div>
+<script>
+  function updateClock() {
+    const now = new Date();
+    let hours = now.getHours().toString().padStart(2, '0');
+    let minutes = now.getMinutes().toString().padStart(2, '0');
+    let seconds = now.getSeconds().toString().padStart(2, '0');
+
+    let day = now.getDate().toString().padStart(2, '0');
+    let month = (now.getMonth() + 1).toString().padStart(2, '0');
+    let year = now.getFullYear();
+
+    document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+    document.getElementById('dateDisplay').textContent = `${day}/${month}/${year}`;
+  }
+
+  setInterval(updateClock, 1000);
+  updateClock(); // Initial call to display the time and date immediately
+</script>
+</body>
+</html>
