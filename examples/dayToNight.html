@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parallax Sky Background</title>
+  <style>
+    canvas {
+      display: block;
+      margin: auto;
+      border: 1px solid #000;
+    }
+  </style>
+</head>
+<body>
+<canvas id="parallaxCanvas" width="800" height="400"></canvas>
+
+<script>
+  const canvas = document.getElementById('parallaxCanvas');
+  const ctx = canvas.getContext('2d');
+
+  const skyColor = {
+    day: '#87CEEB',
+    night: '#000033'
+  };
+
+  const numClouds = 8;
+  const cloudSpeed = 2;
+  const cloudRadius = 20;
+
+  const sunColor = '#FFD700';
+  const moonColor = '#CCCCCC';
+
+  let time = 0;
+  const dayDuration = 900; // 15 minutes
+  const nightDuration = 900; // 15 minutes
+  const transitionDuration = 1800; // 30 minutes
+
+  const clouds = Array.from({ length: numClouds }, createRandomCloud);
+
+  function createRandomCloud() {
+    return {
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height / 2,
+      spread: Math.random() * 30 + 10
+    };
+  }
+
+  function drawBackground() {
+    const currentPhaseTime = time % transitionDuration;
+
+    if (currentPhaseTime < dayDuration) {
+      // Day phase
+      const ratio = currentPhaseTime / dayDuration;
+      drawDaySky(ratio);
+      drawSun(canvas.width / 4, 50, sunColor, ratio);
+    } else {
+      // Night phase
+      const ratio = (currentPhaseTime - dayDuration) / nightDuration;
+      drawNightSky(ratio);
+      drawMoon(canvas.width / 4, 50, moonColor, ratio);
+    }
+  }
+
+  function drawDaySky(ratio) {
+    // Draw sky gradient for day
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, interpolateColor(skyColor.day, skyColor.night, ratio));
+    gradient.addColorStop(1, interpolateColor(skyColor.day, skyColor.night, ratio));
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function drawNightSky(ratio) {
+    // Draw sky gradient for night
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, interpolateColor(skyColor.night, skyColor.day, ratio));
+    gradient.addColorStop(1, interpolateColor(skyColor.night, skyColor.day, ratio));
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function drawClouds() {
+    for (const cloud of clouds) {
+      cloud.x = (cloud.x + cloudSpeed) % canvas.width;
+      drawCloud(cloud.x, cloud.y, cloud.spread);
+    }
+  }
+
+  function drawCloud(x, y, spread) {
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.arc(x, y, cloudRadius, 0, 2 * Math.PI);
+    ctx.arc(x + spread, y - spread / 2, cloudRadius, 0, 2 * Math.PI);
+    ctx.arc(x + 2 * spread, y, cloudRadius, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+
+  function drawSun(x, y, color, glowIntensity) {
+    ctx.shadowBlur = 20 * glowIntensity;
+    ctx.shadowColor = color;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, 30, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  function drawMoon(x, y, color, glowIntensity) {
+    ctx.shadowBlur = 20 * glowIntensity;
+    ctx.shadowColor = color;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, 30, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  function interpolateColor(start, end, ratio) {
+    const startColor = hexToRgb(start);
+    const endColor = hexToRgb(end);
+
+    const r = Math.round(startColor.r + ratio * (endColor.r - startColor.r));
+    const g = Math.round(startColor.g + ratio * (endColor.g - startColor.g));
+    const b = Math.round(startColor.b + ratio * (endColor.b - startColor.b));
+
+    return rgbToHex(r, g, b);
+  }
+
+  function hexToRgb(hex) {
+    const bigint = parseInt(hex.slice(1), 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  }
+
+  function rgbToHex(r, g, b) {
+    return `#${(1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1)}`;
+  }
+
+  function update() {
+    time += 1;
+
+    if (time >= transitionDuration * 60) {
+      // Reset time after the entire transition is complete
+      time = 0;
+
+      // Reset cloud positions for variety in next loop
+      clouds.forEach(cloud => {
+        cloud.x = Math.random() * canvas.width;
+        cloud.y = Math.random() * canvas.height / 2;
+        cloud.spread = Math.random() * 30 + 10;
+      });
+    }
+
+    drawBackground();
+    drawClouds();
+  }
+
+  function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function startAnimation() {
+    setInterval(() => {
+      clearCanvas();
+      update();
+    }, 16);
+  }
+
+  startAnimation();
+</script>
+</body>
+</html>
