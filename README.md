@@ -10,13 +10,29 @@ via the MMU Soda displays.
 - npm install - install depedencies
 - npm start - run locally / start node app
 
-Make sure you have installed node first 
+Make sure you have installed node first
 
 ## Updating canvas content
-upload form and upload html files.
+upload form and upload html files. Download the examples folder from the front page 
+for examples of loadable content
 If you want to customise different displays for different screens 
 you could add screenA.js , screenB.js etc and link to those seperate scripts on the 
 associated html pages. 
+
+## Examples 
+- clock - analogue clock demo showing current local time
+- conways game of life - visualisation of conways game of life
+- day to night - day to night cycle with clouds
+- digital clock - digital clock showing current time
+- drawing - drawing tool
+- fire - fire animation
+- flash circle - flashing circle (might remove this one)
+- kandinsky - random circle art
+- photo to 8bit - converts image to 8bit (bit buggy)
+- random abstract art - creates random circle art with fade in / out
+- portal - morphing portal with random colour changes
+- Tetris - version of classic game (not fully tested but sorta works)
+- water - a animation of waves
 
 ## Spec
 - index.html - Main Menu
