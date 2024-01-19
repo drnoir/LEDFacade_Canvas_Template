@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixel Creature Evolution Simulation</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: black;
+    }
+
+    #pixelCanvas {
+      border: 1px solid white;
+    }
+  </style>
+</head>
+<body>
+<canvas id="pixelCanvas" width="500" height="500"></canvas>
+<script>
+  class PixelCreature {
+    constructor(x, y, size, color, name) {
+      this.body = [
+        { x: x, y: y, size: size },
+        { x: x + size, y: y, size: size },
+        { x: x, y: y + size, size: size },
+        { x: x + size, y: y + size, size: size }
+      ];
+      this.color = color;
+      this.shadowColor = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`;
+      this.velocity = { dx: (Math.random() - 0.5) * 2, dy: (Math.random() - 0.5) * 2 };
+      this.maxSpeed = Math.sqrt(this.velocity.dx * this.velocity.dx + this.velocity.dy * this.velocity.dy);
+      this.name = name;
+    }
+
+    updateVelocity(target, avoid) {
+      const changeRate = 0.05;
+      if (target) {
+        this.velocity.dx += (target.x - this.body[0].x) * changeRate;
+        this.velocity.dy += (target.y - this.body[0].y) * changeRate;
+      }
+      if (avoid) {
+        this.velocity.dx -= (avoid.x - this.body[0].x) * changeRate;
+        this.velocity.dy -= (avoid.y - this.body[0].y) * changeRate;
+      }
+
+      const speed = Math.sqrt(this.velocity.dx * this.velocity.dx + this.velocity.dy * this.velocity.dy);
+      if (speed > 0) {
+        this.velocity.dx = (this.velocity.dx / speed) * this.maxSpeed;
+        this.velocity.dy = (this.velocity.dy / speed) * this.maxSpeed;
+      }
+    }
+
+    move() {
+      for (let pixel of this.body) {
+        pixel.x += this.velocity.dx;
+        pixel.y += this.velocity.dy;
+
+        if (pixel.x < 0 || pixel.x > canvas.width - pixel.size) {
+          this.velocity.dx = -this.velocity.dx;
+        }
+        if (pixel.y < 0 || pixel.y > canvas.height - pixel.size) {
+          this.velocity.dy = -this.velocity.dy;
+        }
+        pixel.x = Math.max(0, Math.min(canvas.width - pixel.size, pixel.x));
+        pixel.y = Math.max(0, Math.min(canvas.height - pixel.size, pixel.y));
+      }
+    }
+
+    draw(ctx) {
+      ctx.fillStyle = this.color;
+      ctx.shadowColor = this.shadowColor;
+      ctx.shadowBlur = 10;
+      for (let pixel of this.body) {
+        ctx.fillRect(pixel.x, pixel.y, pixel.size, pixel.size);
+      }
+    }
+
+    collidesWith(other) {
+      for (let pixelA of this.body) {
+        for (let pixelB of other.body) {
+          if (pixelA.x < pixelB.x + pixelB.size &&
+                  pixelA.x + pixelA.size > pixelB.x &&
+                  pixelA.y < pixelB.y + pixelB.size &&
+                  pixelA.size + pixelA.y > pixelB.y) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    eat(other) {
+      this.body = this.body.concat(other.body.map(p => {
+        return {
+          x: Math.max(0, Math.min(canvas.width - p.size, p.x + (Math.random() - 0.5) * p.size)),
+          y: Math.max(0, Math.min(canvas.height - p.size, p.y + (Math.random() - 0.5) * p.size)),
+          size: p.size
+        };
+      }));
+    }
+  }
+
+  function generateLatinName() {
+    const prefixes = ["Aqua", "Bio", "Carno", "Dino", "Eco", "Flora", "Geo"];
+    const suffixes = ["saurus", "raptor", "rex", "ceratops", "pod", "therium"];
+    return prefixes[Math.floor(Math.random() * prefixes.length)] + suffixes[Math.floor(Math.random() * suffixes.length)];
+  }
+
+  function drawGrid(ctx, width, height, gridSize) {
+    ctx.strokeStyle = '#ddd';
+    ctx.beginPath();
+
+    for (let x = 0; x <= width; x += gridSize) {
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, height);
+    }
+
+    for (let y = 0; y <= height; y += gridSize) {
+      ctx.moveTo(0, y);
+      ctx.lineTo(width, y);
+    }
+
+    ctx.stroke();
+  }
+
+  function findClosestCreature(creature, creatures) {
+    let closest = null;
+    let closestDist = Infinity;
+    for (let other of creatures) {
+      if (other !== creature) {
+        let dx = other.body[0].x - creature.body[0].x;
+        let dy = other.body[0].y - creature.body[0].y;
+        let dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closest = other;
+        }
+      }
+    }
+    return closest;
+  }
+
+  function initializeCreatures() {
+    creatures = [];
+    for (let i = 0; i < 60; i++) {
+      let x = Math.random() * (canvas.width - 20);
+      let y = Math.random() * (canvas.height - 20);
+      let color = `rgb(${100 + Math.random() * 155}, ${100 + Math.random() * 155}, ${100 + Math.random() * 155})`;
+      let name = generateLatinName();
+      creatures.push(new PixelCreature(x, y, 10, color, name));
+    }
+  }
+
+  const canvas = document.getElementById('pixelCanvas');
+  canvas.width = 418;
+  canvas.height = 682;
+  const ctx = canvas.getContext('2d');
+  let creatures = [];
+
+  initializeCreatures();
+  drawGrid(ctx, canvas.width, canvas.height, 10);
+
+  function showWinnerAndRestart() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText("Winner: " + creatures[0].name, 10, 30);
+
+    setTimeout(() => {
+      initializeCreatures();
+      requestAnimationFrame(update);
+    }, 5000);
+  }
+
+  function update() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGrid(ctx, canvas.width, canvas.height, 10);
+
+    for (let i = 0; i < creatures.length; i++) {
+      let creature = creatures[i];
+      creature.move();
+
+      for (let j = i + 1; j < creatures.length; j++) {
+        let other = creatures[j];
+
+        if (creature.collidesWith(other)) {
+          if (creature.body.length >= other.body.length) {
+            creature.eat(other);
+            creatures.splice(j, 1);
+            j--;
+          } else {
+            other.eat(creature);
+            creatures.splice(i, 1);
+            i--;
+            break;
+          }
+        }
+      }
+
+      creature.draw(ctx);
+    }
+
+    if (creatures.length === 1) {
+      showWinnerAndRestart();
+      return;
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  update();
+</script>
+</body>
+</html>
