@@ -11,7 +11,7 @@
 
         canvas {
             display: block;
-            background-color: #eee;
+            background-color: black;
         }
     </style>
     <title>Conway's Game of Life</title>
@@ -35,7 +35,7 @@
 
         for (let row = 0; row < numRows; row++) {
             for (let col = 0; col < numCols; col++) {
-                ctx.fillStyle = grid[row][col] ? '#333' : '#eee';
+                ctx.fillStyle = grid[row][col] ? '#eee' : '#000';
                 ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
                 ctx.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize);
             }

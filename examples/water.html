@@ -11,7 +11,7 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background-color: #87CEEB; /* Sky Blue */
+            background-color: black; /* Sky Blue */
         }
         canvas {
             border: 2px solid #000;
@@ -32,12 +32,12 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Draw sky background
-        ctx.fillStyle = '#87CEEB'; /* Sky Blue */
+        ctx.fillStyle = 'black'; /* Sky Blue */
         ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
 
         // Draw water waves with shades of blue
-        const waveAmplitude = 30;
-        const waveFrequency = 0.02;
+        const waveAmplitude = 180;
+        const waveFrequency = 0.028;
         const waterLevel = canvas.height / 1.5; // Adjusted to make the water taller
 
         ctx.beginPath();

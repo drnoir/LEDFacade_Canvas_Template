@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    canvas {
+      border: 1px solid white;
+    }
+  </style>
+  <title>Pong Game</title>
+</head>
+<body>
+<canvas id="pongCanvas" width="418" height="652"></canvas>
+
+<script>
+  const canvas = document.getElementById("pongCanvas");
+  const ctx = canvas.getContext("2d");
+
+  // Paddle settings
+  const paddleWidth = 20;
+  const paddleHeight = 100;
+  const paddleSpeed = 5;
+
+  // Ball settings
+  const ballSize = 25;
+  let ballSpeedX = 3;
+  let ballSpeedY = 3;
+
+  // Initial paddle positions
+  let player1Y = canvas.height / 2 - paddleHeight / 2;
+  let player2Y = canvas.height / 2 - paddleHeight / 2;
+
+  // Ball position
+  let ballX = canvas.width / 2;
+  let ballY = canvas.height / 2;
+
+  // Player controls
+  let upPressed = false;
+  let downPressed = false;
+
+  // Event listeners for player controls
+  document.addEventListener("keydown", keyDownHandler);
+  document.addEventListener("keyup", keyUpHandler);
+
+  const lineColor = "white";
+  const bgColor = "black";
+  const gapSize = 10;
+
+  function drawGappedLine() {
+    // Clear the canvas
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Set line properties
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 23;
+
+    // Draw gapped line
+    ctx.beginPath();
+    for (let y = 0; y < canvas.height; y += gapSize * 2) {
+      ctx.moveTo(canvas.width / 2, y);
+      ctx.lineTo(canvas.width / 2, y + gapSize);
+    }
+    ctx.stroke();
+  }
+  function keyDownHandler(e) {
+    if (e.key === "Up" || e.key === "ArrowUp") {
+      upPressed = true;
+    } else if (e.key === "Down" || e.key === "ArrowDown") {
+      downPressed = true;
+    }
+  }
+
+  function keyUpHandler(e) {
+    if (e.key === "Up" || e.key === "ArrowUp") {
+      upPressed = false;
+    } else if (e.key === "Down" || e.key === "ArrowDown") {
+      downPressed = false;
+    }
+  }
+
+  function draw() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawGappedLine();
+    // Draw paddles
+    drawPaddle(0, player1Y, paddleWidth, paddleHeight);
+    drawPaddle(canvas.width - paddleWidth, player2Y, paddleWidth, paddleHeight);
+
+    // Draw ball
+    drawBall(ballX, ballY, ballSize);
+    // middle line
+    // Update paddle positions
+    if (upPressed && player1Y > 0) {
+      player1Y -= paddleSpeed;
+    } else if (downPressed && player1Y < canvas.height - paddleHeight) {
+      player1Y += paddleSpeed;
+    }
+
+    // Update ball position
+    ballX += ballSpeedX;
+    ballY += ballSpeedY;
+
+    // Ball collision with top and bottom walls
+    if (ballY - ballSize / 2 < 0 || ballY + ballSize / 2 > canvas.height) {
+      ballSpeedY = -ballSpeedY;
+    }
+
+    // Ball collision with paddles
+    if (
+            (ballX - ballSize / 2 < paddleWidth &&
+                    ballY > player1Y &&
+                    ballY < player1Y + paddleHeight) ||
+            (ballX + ballSize / 2 > canvas.width - paddleWidth &&
+                    ballY > player2Y &&
+                    ballY < player2Y + paddleHeight)
+    ) {
+      ballSpeedX = -ballSpeedX;
+    }
+
+    // Ball out of bounds (scoring)
+    if (ballX - ballSize / 2 < 0 || ballX + ballSize / 2 > canvas.width) {
+      // Reset ball position
+      ballX = canvas.width / 2;
+      ballY = canvas.height / 2;
+
+      // Reverse ball direction
+      ballSpeedX = -ballSpeedX;
+
+      // Randomize ball vertical speed
+      ballSpeedY = Math.random() > 0.5 ? 5 : -5;
+    }
+
+    // Update opponent's paddle position to track the ball
+    if (ballY > player2Y + paddleHeight / 2) {
+      player2Y += paddleSpeed;
+    } else {
+      player2Y -= paddleSpeed;
+    }
+
+    // Request the next frame
+    requestAnimationFrame(draw);
+  }
+
+  function drawPaddle(x, y, width, height) {
+    ctx.fillStyle = "white";
+    ctx.fillRect(x, y, width, height);
+  }
+
+  function drawBall(x, y, size) {
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  // Start the game loop
+  draw();
+
+</script>
+</body>
+</html>

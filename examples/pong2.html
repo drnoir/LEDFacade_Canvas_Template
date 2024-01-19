@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pong Game</title>
+    <style>
+        canvas {
+            background-color: black;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<canvas id="pong" width="418" height="653"></canvas>
+<script>
+    const canvas = document.getElementById("pong");
+    const ctx = canvas.getContext("2d");
+
+    // Paddle properties
+    const paddleWidth = 100;
+    const paddleHeight = 20; // Taller paddles
+    let player1X = (canvas.width - paddleWidth) / 2;
+    let player2X = (canvas.width - paddleWidth) / 2;
+    const paddleSpeed = 5;
+
+    // Ball properties
+    let ballX = canvas.width / 2;
+    let ballY = canvas.height / 2;
+    const ballRadius = 20; // Larger ball
+    let ballSpeedX = 2;
+    let ballSpeedY = 2;
+    let ballColor = "red";
+
+    // Score variables
+    let player1Score = 0;
+    let player2Score = 0;
+
+    // Center line properties
+    const centerX = canvas.width / 2;
+    const centerLineWidth = 4;
+    const centerLineColor = "white";
+
+    // Keyboard controls
+    let player1LeftPressed = false;
+    let player1RightPressed = false;
+    let player2LeftPressed = false;
+    let player2RightPressed = false;
+
+    document.addEventListener("keydown", keyDownHandler);
+    document.addEventListener("keyup", keyUpHandler);
+
+    function keyDownHandler(e) {
+        if (e.key == "Left" || e.key == "ArrowLeft") {
+            player1LeftPressed = true;
+        } else if (e.key == "Right" || e.key == "ArrowRight") {
+            player1RightPressed = true;
+        }
+        if (e.key == "a" || e.key == "A") {
+            player2LeftPressed = true;
+        } else if (e.key == "d" || e.key == "D") {
+            player2RightPressed = true;
+        }
+    }
+
+    function keyUpHandler(e) {
+        if (e.key == "Left" || e.key == "ArrowLeft") {
+            player1LeftPressed = false;
+        } else if (e.key == "Right" || e.key == "ArrowRight") {
+            player1RightPressed = false;
+        }
+        if (e.key == "a" || e.key == "A") {
+            player2LeftPressed = false;
+        } else if (e.key == "d" || e.key == "D") {
+            player2RightPressed = false;
+        }
+    }
+
+    function drawPaddle(x, y) {
+        ctx.beginPath();
+        ctx.rect(x, y, paddleWidth, paddleHeight);
+        ctx.fillStyle = "red"; // Red paddles
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function drawBall() {
+        ctx.beginPath();
+        ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+        ctx.fillStyle = ballColor;
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function drawCenterLine() {
+        ctx.beginPath();
+        ctx.strokeStyle = centerLineColor;
+        ctx.lineWidth = centerLineWidth;
+        ctx.moveTo(0, canvas.height / 2);
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function updateGameArea() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (player1LeftPressed && player1X > 0) {
+            player1X -= paddleSpeed;
+        }
+
+        if (player1RightPressed && player1X < canvas.width - paddleWidth) {
+            player1X += paddleSpeed;
+        }
+
+        if (player2LeftPressed && player2X > 0) {
+            player2X -= paddleSpeed;
+        }
+
+        if (player2RightPressed && player2X < canvas.width - paddleWidth) {
+            player2X += paddleSpeed;
+        }
+
+        ballX += ballSpeedX;
+        ballY += ballSpeedY;
+
+        // Ball collision with walls
+        if (ballX + ballRadius > canvas.width || ballX - ballRadius < 0) {
+            ballSpeedX = -ballSpeedX;
+        }
+
+        // Ball collision with paddles
+        if (
+            ballY + ballRadius > canvas.height - paddleHeight &&
+            ballX > player1X &&
+            ballX < player1X + paddleWidth
+        ) {
+            ballSpeedY = -ballSpeedY;
+            ballColor = getRandomColor();
+        }
+
+        if (
+            ballY - ballRadius < paddleHeight &&
+            ballX > player2X &&
+            ballX < player2X + paddleWidth
+        ) {
+            ballSpeedY = -ballSpeedY;
+            ballColor = getRandomColor();
+        }
+
+        // Ball out of bounds
+        if (ballY + ballRadius > canvas.height) {
+            // Reset the ball to the center
+            ballX = canvas.width / 2;
+            ballY = canvas.height / 2;
+            ballSpeedX = 2;
+            ballSpeedY = 2;
+            ballColor = getRandomColor();
+            // Increase player 1 score
+            player1Score++;
+        }
+
+        if (ballY - ballRadius < 0) {
+            // Reset the ball to the center
+            ballX = canvas.width / 2;
+            ballY = canvas.height / 2;
+            ballSpeedX = 2;
+            ballSpeedY = 2;
+            ballColor = getRandomColor();
+            // Increase player 2 score
+            player2Score++;
+        }
+
+        // Check for game over (player 1 or player 2 reaches a score of 5)
+        if (player1Score >= 5 || player2Score >= 5) {
+            player1Score = 0;
+            player2Score = 0;
+            ballX = canvas.width / 2;
+            ballY = canvas.height / 2;
+            ballSpeedX = 2;
+            ballSpeedY = 2;
+        }
+
+        drawCenterLine();
+        drawPaddle(player1X, canvas.height - paddleHeight);
+        drawPaddle(player2X, 0);
+        drawBall();
+
+        // Display scores as large font numbers
+        ctx.fillStyle = "white";
+        ctx.font = "48px Arial";
+        ctx.fillText(player1Score, centerX - 30, canvas.height / 4 - 10);
+        ctx.fillText(player2Score, centerX - 30, (3 * canvas.height) / 4 + 40);
+
+        requestAnimationFrame(updateGameArea);
+    }
+
+    function getRandomColor() {
+        const letters = "0123456789ABCDEF";
+        let color = "#";
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    updateGameArea();
+</script>
+</body>
+</html>
