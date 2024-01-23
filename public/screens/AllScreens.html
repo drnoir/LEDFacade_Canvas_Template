@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML and MP4 File Runner</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<div id="loaderSidebar">
+    <div class="loader-item">
+        <label for="fileInputA">Select an HTML or MP4 file: Screen A</label>
+        <input type="file" id="fileInputA">
+        <button onclick="loadAndRunFile('htmlFrameA', 'videoPlayerA', 'fileInputA')">Load & Run</button>
+    </div>
+    <div class="loader-item">
+        <label for="fileInputB">Select an HTML or MP4 file: Screen B</label>
+        <input type="file" id="fileInputB">
+        <button onclick="loadAndRunFile('htmlFrameB', 'videoPlayerB', 'fileInputB')">Load & Run</button>
+    </div>
+    <div class="loader-item">
+        <label for="fileInputC">Select an HTML or MP4 file: Screen C</label>
+        <input type="file" id="fileInputC">
+        <button onclick="loadAndRunFile('htmlFrameC', 'videoPlayerC', 'fileInputC')">Load & Run</button>
+    </div>
+    <div class="loader-item">
+        <label for="fileInputD">Select an HTML or MP4 file: Screen D</label>
+        <input type="file" id="fileInputD">
+        <button onclick="loadAndRunFile('htmlFrameD', 'videoPlayerD', 'fileInputD')">Load & Run</button>
+    </div>
+    <div class="loader-item">
+        <label for="fileInputE">Select an HTML or MP4 file: Screen E</label>
+        <input type="file" id="fileInputE">
+        <button onclick="loadAndRunFile('htmlFrameE', 'videoPlayerE', 'fileInputE')">Load & Run</button>
+    </div>
+</div>
+
+<div class="contentContainer">
+    <!--  screen A-->
+    <iframe id="htmlFrameA" sandbox="allow-scripts" width="318" height="283"></iframe>
+    <video id="videoPlayerA" width="418" height="652" style="display:none;" controls autoplay></video>
+    <!--  screen B-->
+    <iframe id="htmlFrameB" sandbox="allow-scripts" width="318" height="196"></iframe>
+    <video id="videoPlayerB" width="418" height="652" style="display:none;" controls autoplay></video>
+    <!--  screen C-->
+    <iframe id="htmlFrameC" sandbox="allow-scripts" width="318" height="283"></iframe>
+    <video id="videoPlayerC" width="418" height="652" style="display:none;" controls autoplay></video>
+</div>
+<div class="contentContainer">
+    <iframe id="htmlFrameD" sandbox="allow-scripts" width="318" height="652"></iframe>
+    <video id="videoPlayerD" width="418" height="652" style="display:none;" controls autoplay></video>
+
+    <iframe id="htmlFrameE" sandbox="allow-scripts" width="418" height="652"></iframe>
+    <video id="videoPlayerE" width="418" height="652" style="display:none;" controls autoplay></video>
+</div>
+<script src = '../js/loader.js'></script>
+</body>
+</html>

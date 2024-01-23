@@ -19,17 +19,45 @@ h1{
 }
 button {
     padding: 10px 20px;
-    font-size: 15px;
+    font-size: 12px;
     cursor: pointer;
     font-family: 'Silkscreen', sans-serif;
 }
 
 input[type=file]{
-    font-size: 20px;
+    font-size: 12px;
     cursor: pointer;
     font-family: 'Silkscreen', sans-serif;
 }
 
+.contentContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: flex-start;
+}
+
+#loaderSidebar{
+    font-family: 'Silkscreen', sans-serif;
+    font-size: 0.5em;
+    display: flex;
+    height: 100%;
+    width: 20%;
+    flex-flow: column wrap;
+    align-content: flex-start;
+    position: absolute;
+    left:0;
+    margin-left: auto;
+}
+
+.loader-item {
+    color:white;
+    width: 100px;
+    margin: 30px;
+    text-align: center;
+    flex-flow: column;
+    letter-spacing: 1px;
+}
 
 /* MEDIA QUERIES FOR MOBILE SUPPORT */
 
