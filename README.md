@@ -39,6 +39,7 @@ associated html pages.
 - Screens - Screens with setup and form elements for loading in html content
 
 ## Screens (Client Side)
+- AllScreens - (CSS / HTML / JS)
 - Screen A - (CSS / HTML / JS)
 - Screen B - Title (CSS / HTML)
 - Screen C - (HTML / CSS / JS)
