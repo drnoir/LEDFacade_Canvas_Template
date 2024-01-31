@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Randomized Pixel Art</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<canvas id="pixelCanvas"></canvas>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const canvas = document.getElementById('pixelCanvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const numShapes = 50;
+    const fadeTime = 2000; // 2 seconds for fade in/out
+    const loopTime = 20000; // 20 seconds loop
+
+    function randomColor() {
+      const colors = ['#FF0000', '#00FF00', '#0000FF']; // Primary colors
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function drawShape(x, y, size) {
+      ctx.beginPath();
+      ctx.fillStyle = randomColor();
+      ctx.fillRect(x, y, size, size);
+      ctx.closePath();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < numShapes; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const size = Math.random() * 20 + 5;
+
+        drawShape(x, y, size);
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function fadeIn() {
+      ctx.globalAlpha += 0.01;
+      if (ctx.globalAlpha >= 1.0) {
+        setTimeout(() => fadeOut(), loopTime - fadeTime);
+      } else {
+        requestAnimationFrame(() => fadeIn());
+      }
+    }
+
+    function fadeOut() {
+      ctx.globalAlpha -= 0.01;
+      if (ctx.globalAlpha <= 0) {
+        setTimeout(() => fadeIn(), loopTime - fadeTime);
+      } else {
+        requestAnimationFrame(() => fadeOut());
+      }
+    }
+
+    setTimeout(() => {
+      animate();
+      fadeIn();
+    }, fadeTime);
+  });
+</script>
+</body>
+</html>

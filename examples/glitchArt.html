@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randomized Glitch Pixel Art</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<canvas id="glitchCanvas"></canvas>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const canvas = document.getElementById('glitchCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const numShapes = 50;
+        const glitchIntensity = 5; // The intensity of glitch effect
+        const fadeTime = 1000; // 1 second for fade in/out
+        const refreshTime = 30000; // 30 seconds refresh
+
+        function randomColor() {
+            const colors = ['#FF0000', '#00FF00', '#0000FF']; // Primary colors
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function drawShape(x, y, size, animationStyle, speed) {
+            ctx.beginPath();
+            ctx.fillStyle = randomColor();
+            ctx.fillRect(x, y, size, size);
+            ctx.closePath();
+
+            // Apply glitch effect
+            for (let i = 0; i < glitchIntensity; i++) {
+                ctx.fillStyle = randomColor();
+                const glitchX = x + Math.random() * glitchIntensity - glitchIntensity / 2;
+                const glitchY = y + Math.random() * glitchIntensity - glitchIntensity / 2;
+                ctx.fillRect(glitchX, glitchY, size, size);
+            }
+
+            // Apply animation styles
+            switch (animationStyle) {
+                case 'pulse':
+                    size += Math.sin(Date.now() * 0.002 * speed) * 5;
+                    break;
+                case 'rotate':
+                    ctx.translate(x + size / 2, y + size / 2);
+                    ctx.rotate((Math.PI / 180) * speed);
+                    ctx.translate(-(x + size / 2), -(y + size / 2));
+                    break;
+                case 'spin':
+                    ctx.translate(x + size / 2, y + size / 2);
+                    ctx.rotate((Math.PI / 180) * speed * (Date.now() % 2 === 0 ? 1 : -1));
+                    ctx.translate(-(x + size / 2), -(y + size / 2));
+                    break;
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < numShapes; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const size = Math.random() * 20 + 10;
+                const animationStyle = ['pulse', 'rotate', 'spin'][Math.floor(Math.random() * 3)];
+                const speed = Math.random() * 2 + 0.35;
+
+                drawShape(x, y, size, animationStyle, speed);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function fadeIn() {
+            ctx.globalAlpha += 0.01;
+            if (ctx.globalAlpha >= 1.0) {
+                setTimeout(() => fadeOut(), refreshTime - fadeTime);
+            } else {
+                requestAnimationFrame(() => fadeIn());
+            }
+        }
+
+        function fadeOut() {
+            ctx.globalAlpha -= 0.01;
+            if (ctx.globalAlpha <= 0) {
+                setTimeout(() => fadeIn(), refreshTime - fadeTime);
+            } else {
+                requestAnimationFrame(() => fadeOut());
+            }
+        }
+
+        setTimeout(() => {
+            animate();
+            fadeIn();
+        }, fadeTime);
+    });
+</script>
+</body>
+</html>
