@@ -9,6 +9,21 @@ const __dirname = path.resolve();
 const app = express();
 const httpServer = createServer(app);
 const PORT = process.env.PORT || 3000;
+import p5 from 'p5'
+
+// // load P5
+// const p5 = require('p5');
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header('Access-Control-Allow-Methods', 'DELETE, PUT');
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    if ('OPTIONS' == req.method) {
+        res.sendStatus(200);
+    }
+    else {
+        next();
+    }});
 
 httpServer.listen(PORT);
 // Serve static files from the 'public' folder

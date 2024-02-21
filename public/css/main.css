@@ -59,6 +59,18 @@ input[type=file]{
     letter-spacing: 1px;
 }
 
+#defaultCanvas0 {
+min-width:100%;
+min-height:100%;
+}
+
+
+.p5Canvas{
+    width:100%;
+    height:100%;
+    margin:0;
+}
+
 /* MEDIA QUERIES FOR MOBILE SUPPORT */
 
 /** Mobile Phones **/
