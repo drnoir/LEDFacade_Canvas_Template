@@ -9,7 +9,7 @@ const __dirname = path.resolve();
 const app = express();
 const httpServer = createServer(app);
 const PORT = process.env.PORT || 3000;
-import p5 from 'p5'
+// import p5 from 'p5'
 
 // // load P5
 // const p5 = require('p5');

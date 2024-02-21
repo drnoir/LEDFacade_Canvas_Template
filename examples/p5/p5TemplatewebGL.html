@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>P5 Template</title>
+<!--  p5 library ref (don't delete)-->
+    <script src='p5.min.js' crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!--  put your p5 code here  -->
+<!--  change canvas size in setup function create canvas-->
+  <script>
+    // canvas setup (change based on screen requirements)
+    // createCanvas(318, 283); SCREEN A
+    // createCanvas(314,196); SCREEN B
+    // createCanvas(318, 283); SCREEN C
+    // createCanvas(418, 652); SCREEN D
+    // createCanvas(422, 656); SCREEN E
+    function setup() {
+        createCanvas(411, 655, WEBGL);
+        // background('black');
+        // line(0, 0, width, height);
+    }
+
+    function draw() {
+        background('black');
+        rotateY(frameCount * 0.01);
+
+        for (let j = 0; j < 5; j++) {
+            push();
+            for (let i = 0; i < 80; i++) {
+                translate(
+                    sin(frameCount * 0.001 + j) * 100,
+                    sin(frameCount * 0.001 + j) * 100,
+                    i * 0.1
+                );
+                rotateZ(frameCount * 0.002);
+                push();
+                sphere(8, 6, 4);
+                pop();
+            }
+            pop();
+        }
+    }
+  </script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World WebGL</title>
+</head>
+<script src='p5.min.js' crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+  let pg;
+  function setup(){
+    createCanvas(422, 656, WEBGL);
+    pg = createGraphics(256,256);
+  }
+  function draw(){
+    background(51);
+    pg.background(255);
+    pg.text('hello world!', 50, 50);
+    //pass graphics as texture
+    texture(pg);
+    plane(400);
+  }
+</script>
+<body>
+
+</body>
+</html>
