@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>16x16 Grid</title>
+  <style>
+    /*canvas {*/
+    /*  border: 1px solid #fff;*/
+    /*}*/
+  </style>
+</head>
+<body>
+<canvas id="gridCanvas" width="418" height="653"></canvas>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var canvas = document.getElementById("gridCanvas");
+    var ctx = canvas.getContext("2d");
+
+    // Calculate cell size
+    var cellSize = canvas.width / 6;
+
+    // Draw grid
+    for (var x = 0; x <= canvas.width; x += cellSize) {
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+    }
+
+    for (var y = 0; y <= canvas.height; y += cellSize) {
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+    }
+
+    ctx.strokeStyle = "#fff";
+    ctx.stroke();
+  });
+</script>
+</body>
+</html>

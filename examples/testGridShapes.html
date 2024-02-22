@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16x16 Grid</title>
+    <style>
+        /*canvas {*/
+        /*  border: 1px solid #fff;*/
+        /*}*/
+    </style>
+</head>
+<body>
+<canvas id="gridCanvas" width="418" height="653"></canvas>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var canvas = document.getElementById("gridCanvas");
+        var ctx = canvas.getContext("2d");
+
+        // Calculate cell size
+        var cellSize = canvas.width / 6;
+
+        // Define shapes and textures
+        function drawShape(x, y, size, shapeIndex) {
+            // Randomize opacity
+            var opacity = Math.random() * 0.6 + 0.4; // Opacity between 0.4 and 1.0
+
+            // Set random texture
+            var textureIndex = Math.floor(Math.random() * 4);
+            var texture;
+            switch (textureIndex) {
+                case 0:
+                    texture = "solid";
+                    break;
+                case 1:
+                    texture = "striped";
+                    break;
+                case 2:
+                    texture = "dotted";
+                    break;
+                case 3:
+                    texture = "gradient";
+                    break;
+            }
+
+            // Draw shape based on shapeIndex
+            switch (shapeIndex) {
+                case 0:
+                    ctx.fillStyle = "rgba(255, 0, 0, " + opacity + ")"; // Red with opacity
+                    ctx.fillRect(x, y, size, size);
+                    break;
+                case 1:
+                    ctx.fillStyle = "rgba(0, 255, 0, " + opacity + ")"; // Green with opacity
+                    ctx.fillRect(x, y, size, size);
+                    break;
+                case 2:
+                    ctx.fillStyle = "rgba(0, 0, 255, " + opacity + ")"; // Blue with opacity
+                    ctx.fillRect(x, y, size, size);
+                    break;
+                case 3:
+                    // Striped texture
+                    ctx.fillStyle = ctx.createPattern(createStripedTexture(size, size), "repeat");
+                    ctx.fillRect(x, y, size, size);
+                    break;
+                case 4:
+                    // Dotted texture
+                    ctx.fillStyle = ctx.createPattern(createDottedTexture(size, size), "repeat");
+                    ctx.fillRect(x, y, size, size);
+                    break;
+                case 5:
+                    // Gradient texture
+                    var gradient = ctx.createLinearGradient(x, y, x + size, y + size);
+                    gradient.addColorStop(0, "rgba(255, 0, 0, " + opacity + ")");
+                    gradient.addColorStop(1, "rgba(0, 0, 255, " + opacity + ")");
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(x, y, size, size);
+                    break;
+                // Add more shapes and textures as needed
+            }
+        }
+
+        // Create striped texture
+        function createStripedTexture(width, height) {
+            var patternCanvas = document.createElement('canvas');
+            patternCanvas.width = width;
+            patternCanvas.height = height;
+            var patternCtx = patternCanvas.getContext('2d');
+            patternCtx.fillStyle = 'white';
+            patternCtx.fillRect(0, 0, width, height);
+            patternCtx.strokeStyle = 'black';
+            patternCtx.lineWidth = 2;
+            patternCtx.beginPath();
+            patternCtx.moveTo(0, height / 2);
+            patternCtx.lineTo(width, height / 2);
+            patternCtx.stroke();
+            return patternCanvas;
+        }
+
+        // Create dotted texture
+        function createDottedTexture(width, height) {
+            var patternCanvas = document.createElement('canvas');
+            patternCanvas.width = width;
+            patternCanvas.height = height;
+            var patternCtx = patternCanvas.getContext('2d');
+            patternCtx.fillStyle = 'white';
+            patternCtx.fillRect(0, 0, width, height);
+            patternCtx.fillStyle = 'black';
+            var dotSize = 2;
+            for (var x = 0; x < width; x += dotSize * 2) {
+                for (var y = 0; y < height; y += dotSize * 2) {
+                    patternCtx.fillRect(x, y, dotSize, dotSize);
+                }
+            }
+            return patternCanvas;
+        }
+
+        // // Draw grid
+        // for (var x = 0; x <= canvas.width; x += cellSize) {
+        //     ctx.moveTo(x, 0);
+        //     ctx.lineTo(x, canvas.height);
+        //     var shapeIndex = (x) % 6; // Change shape every 6 cells
+        //     drawShape(x, posY, cellSize, shapeIndex);
+        // }
+        //
+        // for (var y = 0; y <= canvas.height; y += cellSize) {
+        //     ctx.moveTo(0, y);
+        //     ctx.lineTo(canvas.width, y);
+        // }
+        // Draw grid with shapes and textures
+        for (var x = 0; x < 6; x++) {
+            for (var y = 0; y < 12; y++) {
+                var posX = x * cellSize;
+                var posY = y * cellSize;
+                var shapeIndex = (x + y) % 6; // Change shape every 6 cells
+                drawShape(posX, posY, cellSize, shapeIndex);
+            }
+        }
+
+        // ctx.strokeStyle = "#fff";
+        // ctx.stroke();
+    });
+
+
+</script>
+</body>
+</html>
