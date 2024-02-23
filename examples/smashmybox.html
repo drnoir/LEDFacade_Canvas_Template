@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dungeon Crawler Game</title>
+ <style>body, html {
+   height: 100%;
+   margin: 0;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   background-color: #000000;
+ }
+
+ #health-bar-container {
+   width: 418px;
+   background-color: #555;
+   border-radius: 5px;
+   margin-bottom: 20px;
+   padding: 3px;
+ }
+
+ #health-bar {
+   height: 20px;
+   background-color: green;
+   width: 100%; /* Initial full health */
+   border-radius: 5px;
+   transition: width 0.3s ease;
+ }
+
+ #game-container {
+   width: 418px;
+   height: 100%;
+   position: relative;
+ }
+
+ #grid {
+   display: grid;
+   grid-template-columns: repeat(10, 1fr);
+   grid-template-rows: repeat(10, 1fr);
+   width: 100%;
+   height: 100%;
+ }
+
+ .cell {
+   border: 1px solid #555;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   font-size: 1.2em;
+   color: white;
+ }
+
+ .player {
+   background-color: blue;
+ }
+
+ .enemy {
+   background-color: red;
+ }
+
+ .heal {
+   background-color: green;
+ }
+ #timer {
+   margin-top: 20px;
+   color: white;
+   font-size: 20px;
+ }
+ </style>
+</head>
+<body>
+<div id="game-container">
+  <div id="grid"></div>
+</div>
+<div id="health-bar-container">
+  <div id="health-bar"></div>
+</div>
+<div id="timer">Time Remaining: 1000 seconds</div>
+<script>
+  class Entity {
+    constructor(maxHealth, level) {
+      this.maxHealth = maxHealth;
+      this.health = maxHealth;
+      this.level = level;
+    }
+
+    takeDamage(damage) {
+      this.health -= damage;
+      if (this.health <= 0) {
+        this.die();
+        return true;
+      }
+      return false;
+    }
+
+    die() {
+      console.log('Entity has died');
+    }
+  }
+
+  class Player extends Entity {
+    constructor(maxHealth, level) {
+      super(maxHealth, level);
+    }
+
+    heal(amount) {
+      this.health += amount;
+      if (this.health > this.maxHealth) {
+        this.health = this.maxHealth;
+      }
+    }
+  }
+
+  class Enemy extends Entity {
+    constructor(maxHealth, level) {
+      super(maxHealth, level);
+    }
+
+    updateHealthDisplay(cell) {
+      cell.style.opacity = `${this.health / this.maxHealth}`;
+    }
+  }
+
+  let startTime, player, playerPosition, enemies, healPosition, gameInterval, cells = [], score = 100, timerInterval;
+  const maxTime = 1000; // 1000 seconds for the game
+
+  function startGame() {
+    startTime = Date.now();
+
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    cells = [];
+
+    for (let i = 0; i < 100; i++) {
+      let cell = document.createElement('div');
+      cell.classList.add('cell');
+      grid.appendChild(cell);
+      cells.push(cell);
+    }
+
+    player = new Player(100, 1);
+    playerPosition = 0;
+    cells[playerPosition].classList.add('player');
+    updatePlayerHealthBar(player.health);
+
+    enemies = [];
+    for (let i = 0; i < 10; i++) {
+      let enemyPosition;
+      do {
+        enemyPosition = Math.floor(Math.random() * 100);
+      } while (cells[enemyPosition].classList.contains('enemy'));
+
+      let enemyLevel = Math.floor(Math.random() * 3) + 1;
+      let enemy = new Enemy(50 * enemyLevel, enemyLevel);
+      let enemyCell = cells[enemyPosition];
+      enemyCell.classList.add('enemy');
+      enemy.updateHealthDisplay(enemyCell);
+      enemies.push({enemy, position: enemyPosition});
+    }
+
+    placeHealthBlock();
+
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimer, 1000);
+
+    document.removeEventListener('keydown', handlePlayerMovement);
+    document.addEventListener('keydown', handlePlayerMovement);
+  }
+
+  function placeHealthBlock() {
+    let availableCells = cells.map((cell, index) => ({ cell, index }))
+            .filter(cellObj => !cellObj.cell.classList.contains('enemy') && !cellObj.cell.classList.contains('player'));
+
+    if (availableCells.length > 0) {
+      let randomCellIndex = Math.floor(Math.random() * availableCells.length);
+      healPosition = availableCells[randomCellIndex].index;
+      cells[healPosition].classList.add('heal');
+    }
+  }
+
+  function handlePlayerMovement(e) {
+    let previousPosition = playerPosition;
+
+    switch (e.key) {
+      case 'ArrowUp': playerPosition = Math.max(playerPosition - 10, 0); break;
+      case 'ArrowDown': playerPosition = Math.min(playerPosition + 10, 99); break;
+      case 'ArrowLeft': playerPosition = playerPosition % 10 === 0 ? playerPosition : playerPosition - 1; break;
+      case 'ArrowRight': playerPosition = playerPosition % 10 === 9 ? playerPosition : playerPosition + 1; break;
+    }
+
+    let enemyCollision = enemies.find(enemyObj => playerPosition === enemyObj.position);
+    if (enemyCollision) {
+      player.takeDamage(10);
+      const isEnemyDefeated = enemyCollision.enemy.takeDamage(player.level * 10);
+      enemyCollision.enemy.updateHealthDisplay(cells[enemyCollision.position]);
+      if (isEnemyDefeated) {
+        let enemyCell = cells[enemyCollision.position];
+        enemyCell.classList.remove('enemy');
+        enemyCell.style.opacity = ''; // Reset opacity for the cell
+        enemies = enemies.filter(enemyObj => enemyObj !== enemyCollision);
+      } else {
+        playerPosition = previousPosition; // Stay in the same spot if enemy is not defeated
+      }
+    }
+
+    cells[previousPosition].classList.remove('player');
+    if (!cells[playerPosition].classList.contains('enemy')) {
+      cells[playerPosition].classList.add('player');
+    }
+
+    if (playerPosition === healPosition) {
+      player.heal(20);
+      cells[healPosition].classList.remove('heal');
+      placeHealthBlock();
+    }
+
+    updatePlayerHealthBar(player.health);
+
+    // Check if player's health is 0
+    if (player.health <= 0) {
+      score = 0; // Set score to 0 if player health reaches 0
+      endGame();
+    }
+  }
+
+  function updatePlayerHealthBar(health) {
+    const healthBar = document.getElementById('health-bar');
+    healthBar.style.width = `${health}%`;
+  }
+
+  function updateTimer() {
+    const timerElement = document.getElementById('timer');
+    const timeRemaining = maxTime - Math.floor((Date.now() - startTime) / 1000);
+
+    timerElement.textContent = `Time Remaining: ${timeRemaining} seconds`;
+
+    if (timeRemaining <= 0) {
+      clearInterval(timerInterval);
+      endGame();
+    }
+  }
+
+  function endGame() {
+    alert(`Game Over. Your score is ${score}. Press OK to restart.`);
+    startGame();
+  }
+
+  function checkGameState() {
+    // This function can include any additional game state checks if needed
+  }
+
+  document.addEventListener('DOMContentLoaded', startGame);
+
+</script>
+</body>
+</html>
