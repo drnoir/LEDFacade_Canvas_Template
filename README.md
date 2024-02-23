@@ -34,6 +34,12 @@ associated html pages.
 - Tetris - version of classic game (not fully tested but sorta works)
 - water - a animation of waves
 
+- P5 Examples
+- p5Template.html - template file for loading P5 files
+- p5TemplatewebGL - template file for loading P5 files with WebGL support
+- SnakeP5 - version of snake
+- snowCDN - Falling snow animation example
+
 ## Spec
 - index.html - Main Menu
 - Screens - Screens with setup and form elements for loading in html content
