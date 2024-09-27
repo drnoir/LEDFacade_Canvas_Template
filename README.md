@@ -1,6 +1,5 @@
-# SODA Facade Template👋
-Project for projectable html canvases using Symptholight to allow for streaming html 5 content
-via the MMU Soda displays.
+# LED Facade Template👋
+Project for projectable html canvases configured for Symptholight to allow for streaming html 5 content via LED Displays. Supports loading of html and P5 Files
 
 ## Soda facade frontend
 - html / css / javascript
