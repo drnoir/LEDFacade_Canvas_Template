@@ -1,7 +1,7 @@
 # LED Facade Template👋
 Project for projectable html canvases configured for Symptholight to allow for streaming html 5 content via LED Displays. Supports loading of html and P5 Files
 
-## Soda facade frontend
+## LED facade frontend
 - html / css / javascript
 - files served from node running express
 
@@ -33,7 +33,7 @@ associated html pages.
 - Tetris - version of classic game (not fully tested but sorta works)
 - water - a animation of waves
 
-- P5 Examples
+## P5 Examples
 - p5Template.html - template file for loading P5 files
 - p5TemplatewebGL - template file for loading P5 files with WebGL support
 - SnakeP5 - version of snake
